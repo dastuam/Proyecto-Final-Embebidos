@@ -9,6 +9,12 @@
 FS=fs
 CROSSC=crossc
 
+KERNEL=kernel.tar.gz
+LIGHTHTTP=lighthttp.tar.gz
+BUSYBOX=busybox.tar.gz
+IPTOOLS=iptools.tar.gz
+
+
 
 all:	initfolders unpack createfs createscripts crosscompile install
 
@@ -29,10 +35,10 @@ initfolders:
 #  iptools
 #  busybox
 unpack:
-	@tar xfv kernel.tar.gz
-	@tar xfv busybox.tar.gz
-	@tar xfv lighthttp.tar.gz
-	@tar xfv iptools.tar.gz
+	@tar $(KERNEL)
+	@tar $(BUSYBOX)
+	@tar $(LIGHTHTTP)
+	@tar $(IPTOOLS)
 
 #
 # Creacion de la jerarquia de folder del sistema operativo
