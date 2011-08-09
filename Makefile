@@ -35,10 +35,10 @@ initfolders:
 #  iptools
 #  busybox
 unpack:
-	@tar $(KERNEL)
-	@tar $(BUSYBOX)
-	@tar $(LIGHTHTTP)
-	@tar $(IPTOOLS)
+	@tar -xf $(KERNEL)
+	@tar -xf $(BUSYBOX)
+	@tar -xf $(LIGHTHTTP)
+	@tar -xf $(IPTOOLS)
 
 #
 # Creacion de la jerarquia de folder del sistema operativo
@@ -78,3 +78,6 @@ crosscompile: kernel busybox lighthttp iptools
 #
 install:
 
+clean:
+	@rm -rf crossc
+	@rm -rf fs
