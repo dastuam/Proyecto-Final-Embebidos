@@ -79,5 +79,6 @@ crosscompile: kernel busybox lighthttp iptools
 install:
 
 clean:
-	@rm -rf crossc
-	@rm -rf fs
+	@rm -rf $(FS)
+	@rm -rf $(CROSSC)
+
