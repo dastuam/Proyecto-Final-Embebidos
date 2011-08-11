@@ -37,8 +37,12 @@ initfolders:
 #  busybox
 unpack:
 	#@tar -C $(CROSSC) -xf $(KERNEL)
-	#@tar -C $(CROSSC) -xf $(BUSYBOX)
-	#@tar -C $(CROSSC) -xf $(LIGHTHTTP)
+	@wget -O $(BUSYBOX) http://www.busybox.net/downloads/busybox-1.18.5.tar.bz2
+	@tar -C $(CROSSC) -xf $(BUSYBOX)
+	@rm $(BUSYBOX)
+	@wget -O $(LIGHTHTTP) http://download.lighttpd.net/lighttpd/releases-1.4.x/lighttpd-1.4.28.tar.gz
+	@tar -C $(CROSSC) -xf $(LIGHTHTTP)
+	@rm $(LIGHTHTTP)
 	@tar -C $(CROSSC) -xf $(IPTOOLS)
 
 #
@@ -77,6 +81,7 @@ kernel:
 busybox:
 
 lighthttp:
+	@cd $(CROSSC)/lighttpd-1.4.28; ./configure --host=arm-none-linux-gnueabi --without-pcre --without-zlib --without-bzip2; make
 
 iptools:
 	@cd $(CROSSC)/iptools; ./configure --host=arm-none-linux-gnueabi; make
