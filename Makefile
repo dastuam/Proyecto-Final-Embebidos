@@ -45,9 +45,7 @@ else
 	@echo "Unpacking software"
 	@tar -C $(CROSSC) -xf $(KERNEL)
 	@tar -C $(CROSSC) -xf $(BUSYBOX_NAME)
-	@rm $(BUSYBOX_NAME) 
 	@tar -C $(CROSSC) -xf $(LIGHTHTTP_NAME)
-	@rm $(LIGHTHTTP_NAME)
 	@tar -C $(CROSSC) -xf $(IPTOOLS)
 endif
 	@echo "Finish Unpack"
