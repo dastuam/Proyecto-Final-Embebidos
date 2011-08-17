@@ -36,10 +36,8 @@ ifeq ($(DOWNLOAD), TRUE)
 	@tar -C $(CROSSC) -xf $(KERNEL)
 	@wget $(BUSYBOX_URL)
 	@tar -C $(CROSSC) -xjf $(BUSYBOX_NAME)
-	@rm $(BUSYBOX_NAME)
 	@wget $(LIGHTHTTP_URL) 
 	@tar -C $(CROSSC) -xf $(LIGHTHTTP_NAME)
-	@rm $(LIGHTHTTP_NAME)
 	@tar -C $(CROSSC) -xf $(IPTOOLS)
 else
 	@echo "Unpacking software"
@@ -81,12 +79,13 @@ createfs:
 createscripts:
 
 kernel:
-	@echo "Patching and building kernel"	
-	@rm -rf $(CROSSC)/$(subst .tar.gz,,$(KERNEL))/patches
-	@mv $(CROSSC)/$(subst .tar.gz,,$(KERNEL))/patches.orig \
-		$(CROSSC)/$(subst .tar.gz,,$(KERNEL))/patches
-	@cp makefile_arm.patch $(CROSSC)/$(subst .tar.gz,,$(KERNEL))/patches
-	@echo makefile_arm.patch >> $(CROSSC)/$(subst .tar.gz,,$(KERNEL))/patches/series
+	@echo "Patching and building kernel"
+	@if test -d $(CROSSC)/$(subst .tar.gz,,$(KERNEL))/patches.orig; then \
+		rm -rf $(CROSSC)/$(subst .tar.gz,,$(KERNEL))/patches; \
+		mv $(CROSSC)/$(subst .tar.gz,,$(KERNEL))/patches.orig \
+			$(CROSSC)/$(subst .tar.gz,,$(KERNEL))/patches; \
+	fi
+	@cd $(CROSSC)/$(subst .tar.gz,,$(KERNEL))/patches; quilt import ../../makefile_arm.patch
 	@cd $(CROSSC)/$(subst .tar.gz,,$(KERNEL))/patches/; \
 		quilt pop -a -f; sed -i 's/rr-sdk-integration.patch//g' series; quilt push -a
 	@cd $(CROSSC)/$(subst .tar.gz,,$(KERNEL))/; \
@@ -98,27 +97,34 @@ busybox:
 	@echo "Building BusyBox"
 	@cd $(CROSSC)/$(subst .tar.bz2,,$(BUSYBOX_NAME)); \
 		make defconfig; \
-		make ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabi- CONFIG_PREFIX=../$(FS); \
-		make install DESTDIR=../$(FS)
+		make TARGET_ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabi-; \
+		make install TARGET_ARC=arm CROSS_COMPILE=arm-none-linux-gnueabi- CONFIG_PREFIX=installdir; \
+		cp -r installdir/* ../../fs/
 	@echo "Finish building BusyBox"
  		
 lighthttp:
 	@echo "Building Lighthttp"
-	@mkdir $(CROSSC)/$(subst .tar.gz,,$(LIGHTHTTP_NAME))/installdir
+	@if test ! -d $(CROSSC)/$(subst .tar.gz,,$(LIGHTHTTP_NAME))/installdir; then \
+		mkdir $(CROSSC)/$(subst .tar.gz,,$(LIGHTHTTP_NAME))/installdir; \
+	fi
 	@cd $(CROSSC)/$(subst .tar.gz,,$(LIGHTHTTP_NAME)); \
 		./configure --host=arm-none-linux-gnueabi --without-pcre --without-zlib --without-bzip2; \
 		make; \
-		make install DESTDIR=`pwd`/installdir
+		make install DESTDIR=`pwd`/installdir; \
+		cp -r installdir/usr/local/sbin/* ../../fs/usr/sbin/
 	@echo "Finish building Lighthttp"
 
 iptools:
 	@echo "Building IPtools"
-	@mkdir $(CROSSC)/iptools/installdir
-	@cd $(CROSSC)/iptools; ./configure --host=arm-none-linux-gnueabi; make; make install DESTDIR=installdir
+	@if test ! -d $(CROSSC)/iptools/installdir; then \
+		@mkdir $(CROSSC)/iptools/installdir \
+	fi
+	@cd $(CROSSC)/iptools; ./configure --host=arm-none-linux-gnueabi; \
+		make; make install DESTDIR=`pwd`/installdir; \
+		cp -r installdir/usr/local/bin/* ../../fs/usr/bin
 	@echo "Finish building IPtools"
 
 .PHONY:
-
 #
 # Se cross compilan las aplicaciones asignadas y el kernel
 # 
@@ -128,7 +134,10 @@ crosscompile: kernel busybox lighthttp iptools
 clean:
 	@rm -rf $(FS)
 	@rm -rf $(CROSSC)
-	
+
+clean-download:
+	@rm -rf $(LIGHTHTTP_NAME) 
+	@rm -rf $(BUSYBOX_NAME)
 #
 # Creacion folders para gestion del proyecto
 # fs = Estructura File System 
