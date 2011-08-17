@@ -54,7 +54,7 @@ endif
 createfs:
 	@echo "Creating Filesystem"
 	@cd $(FS); mkdir bin dev etc lib proc sbin tmp usr var
-	@cd $(FS); chmod 1777 tmp
+	@cd $(FS); chmod 1777 tmp; mkdir srv; echo "Hello" srv/index.html
 	@cd $(FS); mkdir usr/bin usr/lib usr/sbin
 	@cd $(FS); mkdir var/lib var/lock var/log var/run var/tmp
 	@cd $(FS); chmod 1777 var/tmp
@@ -77,6 +77,7 @@ createfs:
 # Tomados del FS proveido por RidgeRun
 #
 createscripts:
+	@cp -r etc/* fs/etc/
 
 kernel:
 	@echo "Patching and building kernel"
@@ -90,8 +91,14 @@ kernel:
 		quilt pop -a -f; sed -i 's/rr-sdk-integration.patch//g' series; quilt push -a
 	@cd $(CROSSC)/$(subst .tar.gz,,$(KERNEL))/; \
 		make -j4 ARCH=arm; \
-		make uImage 
+		make uImage
 	@echo "Finish Kernel build"
+
+install-kernel:
+	@if ! test -d kernel; then \
+		mkdir kernel; \
+	fi
+	@cp $(CROSSC)/$(subst .tar.gz,,$(KERNEL))/arch/arm/boot/uImage kernel/ 
 
 busybox:
 	@echo "Building BusyBox"
@@ -117,7 +124,7 @@ lighthttp:
 iptools:
 	@echo "Building IPtools"
 	@if test ! -d $(CROSSC)/iptools/installdir; then \
-		@mkdir $(CROSSC)/iptools/installdir \
+		mkdir $(CROSSC)/iptools/installdir; \
 	fi
 	@cd $(CROSSC)/iptools; ./configure --host=arm-none-linux-gnueabi; \
 		make; make install DESTDIR=`pwd`/installdir; \
