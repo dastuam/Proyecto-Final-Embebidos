@@ -1,7 +1,43 @@
-Autores:
+This makefile is able to cross compile and create a complete filesystem able to be used inside a embeded linux board.
+
+Instructions:
+	Put a tarbal of the linux kernel 2.6.29 in the same folder of this makefile and type 'make'.
+	<N> folders named <a,b,c> are created.
+	The folders you need to be able to use your board are 'fs' who contains the filesystem and 'kernel' who contains the kernel image named 'uImage'.
+
+Required software:
+	quilt
+	sed
+	wget
+	tar
+	bzip2
+	gzip
+	mkimage
+
+Assumes directory named /opt/arm-2009q1/bin/ with toolchain, the kernel must be located in the same place as the makefile.
+
+Targets inside the makefile:
+
+	all: generates the filesystem, contents  and kernel image
+	unpack: download and unpack all the required software. If you provide your own packages set the variable DOWNLOAD=false
+	createfs:
+	createscripts:
+	kernel:
+	install-kernel: copies the kernel image to the kernel folder on the top directory
+	busybox:
+	lighthttp:
+	iptools:
+	crosscompile:
+	clean-all: remove all the auto generated folders and files
+	clean: removes the crosscompile folder
+	clean-download: removes the downloaded files
+	clean-done: removes the folders were the done job are stored (fs and kernel)
+	initfolders:
+
+
+
+Authors:
 
 	Adrian Bonilla Bonilla
 	David Astua Mora
 	Luis Carlos Chacon
-
-Assumes directory named arm-2009q1 with toolchain

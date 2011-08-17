@@ -149,10 +149,9 @@ clean-all: clean clean-download clean-done
 	
 
 #
-# Remove temporal source folder and filesystem
+# Remove temporal source folder
 #
 clean:
-	@rm -rf $(FS)
 	@rm -rf $(CROSSC)
 #
 # Remove downloaded software
