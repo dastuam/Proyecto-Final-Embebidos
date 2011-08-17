@@ -10,6 +10,7 @@ FS=fs
 CROSSC=crosscompile
 
 KERNEL=linux-2.6.29.tar.gz
+KERNEL_FOLDER=kernel
 LIGHTHTTP_URL=http://download.lighttpd.net/lighttpd/releases-1.4.x/lighttpd-1.4.28.tar.gz
 LIGHTHTTP_NAME=lighttpd-1.4.28.tar.gz
 BUSYBOX_URL=http://www.busybox.net/downloads/busybox-1.18.5.tar.bz2
@@ -21,7 +22,7 @@ DOWNLOAD=TRUE
 PATH:=/arm-2009q1/bin:$(PATH)
 export PATH
 
-all:	initfolders unpack createfs createscripts crosscompile 
+all:	initfolders unpack createfs createscripts crosscompile install-kernel
 
 #
 # Descomprimimos los archivos necesarios para realizar el proyecto
@@ -53,11 +54,12 @@ endif
 #
 createfs:
 	@echo "Creating Filesystem"
-	@cd $(FS); mkdir bin dev etc lib proc sbin tmp usr var
+	@cd $(FS); mkdir bin dev etc lib proc sbin tmp usr var sys
 	@cd $(FS); chmod 1777 tmp; mkdir srv; echo "Hello" srv/index.html
 	@cd $(FS); mkdir usr/bin usr/lib usr/sbin
 	@cd $(FS); mkdir var/lib var/lock var/log var/run var/tmp
 	@cd $(FS); chmod 1777 var/tmp
+	@cd $(FS); mkdir -p usr/local/lib
 	@echo "Getting libraries from toolchain"
 	@cd $(FS); cp -r $(LIB_PATH)/* lib/
 	@echo "Creating device nodes"
@@ -95,10 +97,10 @@ kernel:
 	@echo "Finish Kernel build"
 
 install-kernel:
-	@if ! test -d kernel; then \
-		mkdir kernel; \
+	@if ! test -d $(KERNEL_FOLDER); then \
+		mkdir $(KERNEL_FOLDER); \
 	fi
-	@cp $(CROSSC)/$(subst .tar.gz,,$(KERNEL))/arch/arm/boot/uImage kernel/ 
+	@cp $(CROSSC)/$(subst .tar.gz,,$(KERNEL))/arch/arm/boot/uImage $(KERNEL_FOLDER)/ 
 
 busybox:
 	@echo "Building BusyBox"
@@ -118,7 +120,8 @@ lighthttp:
 		./configure --host=arm-none-linux-gnueabi --without-pcre --without-zlib --without-bzip2; \
 		make; \
 		make install DESTDIR=`pwd`/installdir; \
-		cp -r installdir/usr/local/sbin/* ../../fs/usr/sbin/
+		cp -r installdir/usr/local/sbin/* ../../fs/usr/sbin/; \
+		cp -r installdir/usr/local/lib/* ../../fs/usr/local/lib/
 	@echo "Finish building Lighthttp"
 
 iptools:
@@ -138,13 +141,33 @@ iptools:
 #
 crosscompile: kernel busybox lighthttp iptools
 
+#
+# Remove all the directories and files created by
+# the makefile
+#
+clean-all: clean clean-download clean-done
+	
+
+#
+# Remove temporal source folder and filesystem
+#
 clean:
 	@rm -rf $(FS)
 	@rm -rf $(CROSSC)
-
+#
+# Remove downloaded software
+#
 clean-download:
 	@rm -rf $(LIGHTHTTP_NAME) 
 	@rm -rf $(BUSYBOX_NAME)
+
+#
+# Remove the FS and the kernel
+#
+clean-done:
+	@rm -rf $(FS)
+	@rm -rf $(KERNEL_FOLDER)
+
 #
 # Creacion folders para gestion del proyecto
 # fs = Estructura File System 

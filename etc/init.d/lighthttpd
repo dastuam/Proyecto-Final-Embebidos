@@ -1,5 +1,3 @@
 #!/bin/sh
 
-if test -e /etc/lighthttpd.conf; then
-	 /usr/sbin/lighthttpd -f /etc/lighthttpd.conf;
-fi
+/usr/sbin/lighttpd -f /etc/lighttpd.conf &
