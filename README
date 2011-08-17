@@ -20,19 +20,19 @@ Targets inside the makefile:
 
 	all: generates the filesystem, contents  and kernel image
 	unpack: download and unpack all the required software. If you provide your own packages set the variable DOWNLOAD=false
-	createfs:
-	createscripts:
-	kernel:
+	createfs: generates the filesystem by creating the necessary directories, getting the libraries from the toolchain and creating the device nodes 
+	createscripts: copies the necessary scripts to the created file system
+	kernel: applies the patches to the kernel and creates the kernel's image
 	install-kernel: copies the kernel image to the kernel folder on the top directory
-	busybox:
-	lighthttp:
-	iptools:
-	crosscompile:
+	busybox: crosscompiles and installs busybox
+	lighthttp: crosscompiles and installs lighthttp
+	iptools: crosscompiles and installs iptools
+	crosscompile: crosscompiles and installs busybox, lighthttp and iptools
 	clean-all: remove all the auto generated folders and files
 	clean: removes the crosscompile folder
 	clean-download: removes the downloaded files
 	clean-done: removes the folders were the done job are stored (fs and kernel)
-	initfolders:
+	initfolders: creates the fs (directory in which the filesystem will be built) and crossc (directory to help on the crosscompilation of the apps) directories
 
 
 
