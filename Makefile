@@ -55,7 +55,7 @@ endif
 createfs:
 	@echo "Creating Filesystem"
 	@cd $(FS); mkdir bin dev etc lib proc sbin tmp usr var sys
-	@cd $(FS); chmod 1777 tmp; mkdir srv; echo "Hello" srv/index.html
+	@cd $(FS); chmod 1777 tmp; mkdir srv; echo "Hello" >> srv/index.html
 	@cd $(FS); mkdir usr/bin usr/lib usr/sbin
 	@cd $(FS); mkdir var/lib var/lock var/log var/run var/tmp
 	@cd $(FS); chmod 1777 var/tmp
