@@ -32,7 +32,7 @@ Targets inside the makefile:
 	clean: removes the crosscompile folder
 	clean-download: removes the downloaded files
 	clean-done: removes the folders were the done job are stored (fs and kernel)
-	initfolders: creates the fs (directory in which the filesystem will be built) and crossc (directory to help on the crosscompilation of the apps) directories
+	initfolders: creates the fs (directory in which the filesystem will be built) and crosscompile (directory to help on the crosscompilation of the apps) directories
 
 
 
