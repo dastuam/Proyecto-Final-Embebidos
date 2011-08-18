@@ -1,7 +1,7 @@
 This makefile is able to cross compile and create a complete filesystem able to be used inside a embeded linux board.
 
 Instructions:
-	Put a tarbal of the linux kernel 2.6.29 in the same folder of this makefile and type 'make'.
+	Put a tarbal of the linux kernel 2.6.29 in the same folder of this makefile and type 'make'. (The make process ask for the user paswword to perform certain commands, you can use 'sudo' to avoid having to type the password on the middle of the process)
 	<N> folders named <a,b,c> are created.
 	The folders you need to be able to use your board are 'fs' who contains the filesystem and 'kernel' who contains the kernel image named 'uImage'.
 
